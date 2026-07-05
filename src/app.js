@@ -3,10 +3,13 @@ const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
 const env = require('./config/env');
+const { corsOptions } = require('./config/cors');
 const connectDB = require('./config/db');
 const { initRedis, isRedisConnected } = require('./config/redis');
 const { errorHandler } = require('./middleware/errorHandler');
 const { initSockets } = require('./sockets');
+
+let ready = false;
 
 
 const authRoutes = require('./routes/authRoutes');
@@ -18,16 +21,31 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(helmet());
-app.use(cors({ origin: env.clientUrl, credentials: true }));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10kb' }));
 
 app.get('/api/health', (_req, res) => {
+  if (!ready) {
+    return res.status(503).json({
+      success: false,
+      message: 'Starting up',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   res.json({
     success: true,
     message: 'OK',
     timestamp: new Date().toISOString(),
     redis: env.redis.enabled ? (isRedisConnected() ? 'connected' : 'disconnected') : 'disabled',
   });
+});
+
+app.use('/api', (req, res, next) => {
+  if (!ready) {
+    return res.status(503).json({ success: false, message: 'Server starting up' });
+  }
+  next();
 });
 
 app.use('/api/auth', authRoutes);
@@ -42,15 +60,22 @@ app.use((_req, res) => {
 app.use(errorHandler);
 
 const start = async () => {
-  await connectDB();
-
-  const redisClients = await initRedis();
-  const io = await initSockets(server, redisClients);
-  app.set('io', io);
-
-  server.listen(env.port, () => {
-    console.log(`Server running on port ${env.port} [${env.nodeEnv}]`);
+  server.listen(env.port, '0.0.0.0', () => {
+    console.log(`Server listening on port ${env.port} [${env.nodeEnv}]`);
+    console.log(`CORS origins: ${env.clientUrls.join(', ')}`);
   });
+
+  try {
+    await connectDB();
+    const redisClients = await initRedis();
+    const io = await initSockets(server, redisClients);
+    app.set('io', io);
+    ready = true;
+    console.log('Server ready');
+  } catch (err) {
+    console.error('Startup failed:', err.message);
+    process.exit(1);
+  }
 };
 
 start();

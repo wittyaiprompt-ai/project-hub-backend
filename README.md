@@ -26,7 +26,7 @@ Server runs at `http://localhost:5000`
 |----------|-------------|
 | `MONGODB_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret for signing tokens |
-| `CLIENT_URL` | Frontend URL for CORS (no trailing slash) |
+| `CLIENT_URL` | Frontend URL(s) for CORS — comma-separated, no trailing slash |
 | `REDIS_ENABLED` | `true` to enable Redis adapter |
 | `REDIS_URL` | Redis connection URL |
 | `PORT` | Default `5000` (Render sets automatically) |

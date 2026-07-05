@@ -10,6 +10,13 @@ for (const key of required) {
 
 const normalizeUrl = (url) => url.replace(/\/+$/, '');
 
+const parseClientUrls = () => {
+  const raw = process.env.CLIENT_URL || 'http://localhost:3000';
+  return [...new Set(raw.split(',').map((u) => normalizeUrl(u.trim())).filter(Boolean))];
+};
+
+const clientUrls = parseClientUrls();
+
 module.exports = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 5000,
@@ -22,5 +29,6 @@ module.exports = {
     url: process.env.REDIS_URL || 'redis://localhost:6379',
     enabled: process.env.REDIS_ENABLED === 'true',
   },
-  clientUrl: normalizeUrl(process.env.CLIENT_URL || 'http://localhost:3000'),
+  clientUrls,
+  clientUrl: clientUrls[0],
 };

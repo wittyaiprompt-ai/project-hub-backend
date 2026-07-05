@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { createAdapter } = require('@socket.io/redis-adapter');
 const env = require('../config/env');
+const { socketCors } = require('../config/cors');
 const User = require('../models/User');
 const taskService = require('../services/taskService');
 const authService = require('../services/authService');
@@ -71,11 +72,9 @@ const initSockets = async (server, redisClients) => {
   const { Server } = require('socket.io');
 
   const io = new Server(server, {
-    cors: {
-      origin: env.clientUrl,
-      methods: ['GET', 'POST'],
-      credentials: true,
-    },
+    cors: socketCors,
+    pingTimeout: 60000,
+    pingInterval: 25000,
   });
 
   if (redisClients) {
