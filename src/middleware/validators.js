@@ -1,8 +1,17 @@
 const { body, param } = require('express-validator');
 const { STATUSES, PRIORITIES } = require('../models/Task');
 
+const NAME_PATTERN = /^[a-zA-Z\s'-]+$/;
+
 const registerRules = [
-  body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 100 }),
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Name is required')
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Name must be 2–100 characters')
+    .matches(NAME_PATTERN)
+    .withMessage('Name can only contain letters, spaces, hyphens and apostrophes'),
   body('email').trim().isEmail().withMessage('Valid email required').normalizeEmail(),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
 ];
