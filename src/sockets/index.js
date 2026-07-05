@@ -7,6 +7,7 @@ const authService = require('../services/authService');
 
 const projectRoom = (projectId) => `project:${projectId}`;
 
+
 const setupSocketAuth = (io) => {
   io.use(async (socket, next) => {
     try {
