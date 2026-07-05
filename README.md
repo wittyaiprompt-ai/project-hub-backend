@@ -43,7 +43,9 @@ REDIS_URL=rediss://default:YOUR_PASSWORD@YOUR_HOST.upstash.io:6379
 ```
 
 4. Redeploy backend
-5. Check health: `GET /api/health` should show `"redis": "connected"`
+5. Check health: `GET /api/health` — `"redis": "ready"` means adapter works; `"unavailable"` means pub/sub blocked (app still runs on one server)
+
+**Upstash NOPERM?** Some Upstash plans block `PUBLISH`/`SUBSCRIBE`. The server falls back automatically. For a single Render instance that is fine. Or set `REDIS_ENABLED=false`.
 
 Redis is used as the Socket.IO adapter so real-time events sync if you scale to multiple server instances.
 

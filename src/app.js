@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const env = require('./config/env');
 const { corsOptions } = require('./config/cors');
 const connectDB = require('./config/db');
-const { initRedis, isRedisConnected } = require('./config/redis');
+const { initRedis, getRedisStatus } = require('./config/redis');
 const { errorHandler } = require('./middleware/errorHandler');
 const { initSockets } = require('./sockets');
 
@@ -37,7 +37,7 @@ app.get('/api/health', (_req, res) => {
     success: true,
     message: 'OK',
     timestamp: new Date().toISOString(),
-    redis: env.redis.enabled ? (isRedisConnected() ? 'connected' : 'disconnected') : 'disabled',
+    redis: getRedisStatus(),
   });
 });
 

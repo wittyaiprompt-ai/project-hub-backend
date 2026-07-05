@@ -105,7 +105,14 @@ const deleteTask = async (taskId, userId) => {
     throw new AppError('Task not found', 404);
   }
 
-  await checkAccess(task.project, userId);
+  const project = await checkAccess(task.project, userId);
+
+  const isCreator = task.createdBy.toString() === userId.toString();
+  const isOwner = project.owner.toString() === userId.toString();
+
+  if (!isCreator && !isOwner) {
+    throw new AppError('Only the task creator or project owner can delete this task', 403);
+  }
 
   const projectId = task.project;
   await task.deleteOne();

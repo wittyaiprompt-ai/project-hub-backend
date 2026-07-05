@@ -78,7 +78,14 @@ const initSockets = async (server, redisClients) => {
   });
 
   if (redisClients) {
-    io.adapter(createAdapter(redisClients.pubClient, redisClients.subClient));
+    try {
+      io.adapter(createAdapter(redisClients.pubClient, redisClients.subClient));
+      console.log('Socket.IO Redis adapter attached');
+    } catch (err) {
+      console.warn('Socket.IO Redis adapter skipped:', err.message);
+    }
+  } else {
+    console.log('Socket.IO using in-memory adapter (single server)');
   }
 
   setupSocketAuth(io);
