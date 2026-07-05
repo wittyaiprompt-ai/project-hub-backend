@@ -8,6 +8,7 @@ const { initRedis } = require('./config/redis');
 const { errorHandler } = require('./middleware/errorHandler');
 const { initSockets } = require('./sockets');
 
+
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
