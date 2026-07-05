@@ -2,6 +2,16 @@
 
 Express + MongoDB + Socket.IO + Redis backend for the internal project management system.
 
+## Live API
+
+**https://project-hub-backend-q5me.onrender.com**
+
+| Service | URL |
+|---------|-----|
+| API base | [project-hub-backend-q5me.onrender.com/api](https://project-hub-backend-q5me.onrender.com/api) |
+| Health check | [project-hub-backend-q5me.onrender.com/api/health](https://project-hub-backend-q5me.onrender.com/api/health) |
+| GitHub | [project-hub-be](https://github.com/wittyaiprompt-ai/project-hub-be) |
+
 ## Stack
 
 - Node.js, Express
@@ -31,10 +41,21 @@ Server runs at `http://localhost:5000`
 | `REDIS_URL` | Redis connection URL |
 | `PORT` | Default `5000` (Render sets automatically) |
 
+Production example (Render):
+
+```
+MONGODB_URI=<Atlas URI>
+JWT_SECRET=<random secret>
+CLIENT_URL=https://regal-mermaid-148817.netlify.app
+REDIS_ENABLED=true
+REDIS_URL=rediss://default:<password>@<host>.upstash.io:6379
+NODE_ENV=production
+```
+
 ## Redis setup (production — Upstash free)
 
 1. Go to [upstash.com](https://upstash.com) → Create database → **Redis**
-2. Copy the **Redis URL** (starts with `rediss://`)
+2. Copy the **read-write TCP URL** (starts with `rediss://`, user `default`)
 3. On **Render**, add env vars:
 
 ```
@@ -43,9 +64,9 @@ REDIS_URL=rediss://default:YOUR_PASSWORD@YOUR_HOST.upstash.io:6379
 ```
 
 4. Redeploy backend
-5. Check health: `GET /api/health` — `"redis": "ready"` means adapter works; `"unavailable"` means pub/sub blocked (app still runs on one server)
+5. Check health: https://project-hub-backend-q5me.onrender.com/api/health — `"redis": "ready"` means adapter works; `"unavailable"` means pub/sub blocked (app still runs on one server)
 
-**Upstash NOPERM?** Some Upstash plans block `PUBLISH`/`SUBSCRIBE`. The server falls back automatically. For a single Render instance that is fine. Or set `REDIS_ENABLED=false`.
+**Upstash NOPERM?** Use the read-write TCP URL (not `default_ro`). The server falls back automatically if pub/sub is blocked. Or set `REDIS_ENABLED=false`.
 
 Redis is used as the Socket.IO adapter so real-time events sync if you scale to multiple server instances.
 
@@ -65,7 +86,7 @@ Health: `GET /api/health`
 
 ## Frontend repo
 
-[project-hub-fe](https://github.com/wittyaiprompt-ai/project-hub-fe)
+[project-hub-fe](https://github.com/wittyaiprompt-ai/project-hub-fe) — live at https://regal-mermaid-148817.netlify.app
 
 ## License
 
