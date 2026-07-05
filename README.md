@@ -1,6 +1,6 @@
 # ProjectHub — Backend API
 
-Express + MongoDB + Socket.IO backend for the internal project management system.
+Express + MongoDB + Socket.IO + Redis backend for the internal project management system.
 
 ## Stack
 
@@ -8,14 +8,12 @@ Express + MongoDB + Socket.IO backend for the internal project management system
 - MongoDB (Mongoose)
 - JWT authentication
 - Socket.IO (real-time task updates)
-- Redis adapter (optional, for scaling)
+- Redis (Socket.IO adapter for pub/sub across instances)
 
 ## Setup
 
 ```bash
 cp .env.example .env
-# Edit MONGODB_URI, JWT_SECRET, CLIENT_URL
-
 npm install
 npm run dev
 ```
@@ -28,9 +26,26 @@ Server runs at `http://localhost:5000`
 |----------|-------------|
 | `MONGODB_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret for signing tokens |
-| `CLIENT_URL` | Frontend URL for CORS |
+| `CLIENT_URL` | Frontend URL for CORS (no trailing slash) |
 | `REDIS_ENABLED` | `true` to enable Redis adapter |
-| `PORT` | Default `5000` |
+| `REDIS_URL` | Redis connection URL |
+| `PORT` | Default `5000` (Render sets automatically) |
+
+## Redis setup (production — Upstash free)
+
+1. Go to [upstash.com](https://upstash.com) → Create database → **Redis**
+2. Copy the **Redis URL** (starts with `rediss://`)
+3. On **Render**, add env vars:
+
+```
+REDIS_ENABLED=true
+REDIS_URL=rediss://default:YOUR_PASSWORD@YOUR_HOST.upstash.io:6379
+```
+
+4. Redeploy backend
+5. Check health: `GET /api/health` should show `"redis": "connected"`
+
+Redis is used as the Socket.IO adapter so real-time events sync if you scale to multiple server instances.
 
 ## API
 

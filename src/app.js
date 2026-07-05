@@ -4,7 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const env = require('./config/env');
 const connectDB = require('./config/db');
-const { initRedis } = require('./config/redis');
+const { initRedis, isRedisConnected } = require('./config/redis');
 const { errorHandler } = require('./middleware/errorHandler');
 const { initSockets } = require('./sockets');
 
@@ -22,7 +22,12 @@ app.use(cors({ origin: env.clientUrl, credentials: true }));
 app.use(express.json({ limit: '10kb' }));
 
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'OK', timestamp: new Date().toISOString() });
+  res.json({
+    success: true,
+    message: 'OK',
+    timestamp: new Date().toISOString(),
+    redis: env.redis.enabled ? (isRedisConnected() ? 'connected' : 'disconnected') : 'disabled',
+  });
 });
 
 app.use('/api/auth', authRoutes);

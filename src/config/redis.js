@@ -3,6 +3,7 @@ const env = require('./env');
 
 let pubClient = null;
 let subClient = null;
+let connected = false;
 
 const initRedis = async () => {
   if (!env.redis.enabled) {
@@ -16,11 +17,14 @@ const initRedis = async () => {
   subClient.on('error', (err) => console.error('Redis sub error:', err.message));
 
   await Promise.all([pubClient.connect(), subClient.connect()]);
+  connected = true;
   console.log('Redis connected');
 
   return { pubClient, subClient };
 };
 
+const isRedisConnected = () => connected;
+
 const getRedisClients = () => ({ pubClient, subClient });
 
-module.exports = { initRedis, getRedisClients };
+module.exports = { initRedis, getRedisClients, isRedisConnected };
