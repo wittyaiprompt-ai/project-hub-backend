@@ -10,7 +10,7 @@ Express + MongoDB + Socket.IO + Redis backend for the internal project managemen
 |---------|-----|
 | API base | [project-hub-backend-q5me.onrender.com/api](https://project-hub-backend-q5me.onrender.com/api) |
 | Health check | [project-hub-backend-q5me.onrender.com/api/health](https://project-hub-backend-q5me.onrender.com/api/health) |
-| GitHub | [project-hub-be](https://github.com/wittyaiprompt-ai/project-hub-be) |
+| GitHub | [project-hub-backend](https://github.com/wittyaiprompt-ai/project-hub-backend) |
 
 ## Stack
 
@@ -86,7 +86,7 @@ Health: `GET /api/health`
 
 ## Frontend repo
 
-[project-hub-fe](https://github.com/wittyaiprompt-ai/project-hub-fe) — live at https://regal-mermaid-148817.netlify.app
+[project-hub-frontend](https://github.com/wittyaiprompt-ai/project-hub-frontend) — live at https://regal-mermaid-148817.netlify.app
 
 ## License
 
